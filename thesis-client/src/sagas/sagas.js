@@ -42,6 +42,7 @@ import {
   GET_USER_FAVORITES_SUCCESS,
   GET_USER_FAVORITES,
   REMOVE_FAVORITE,
+  DELETE_TRIP,
   } from '../constants';
 import { GOOGLE_API_KEY } from '../../config';
 
@@ -165,7 +166,7 @@ const getUserDirectionsAsync = function* ({ payload: { origin, destination, join
       return coords;
 
     } catch (error) {
-      console.log(error);
+      console.error(error);
     }
 };
 
@@ -192,7 +193,7 @@ const getActiveTripAsync = function* (action) {
       };
     });    activeTrip['coords'] = coords;
     yield put({ type: 'GET_ACTIVE_TRIP_SUCCESS', payload: activeTrip });  } catch (error) {
-    console.log(error);
+    console.error(error);
   }
 };
 
@@ -239,9 +240,18 @@ const createTripAsync = function* (payload) {
       });
     }
   } catch (error) {
-    console.log(error);
+    console.error(error);
   }
 };
+
+const deleteTrip = function* ({payload}) {
+  try {
+    const tripDelete = yield call(dbSecureDELETE, 'route', payload);
+    yield put({ type: GET_USER_TRIPS_SUCCESS, payload: tripDelete });
+  } catch (error) {
+    console.error(error);
+  }
+}
 
 const saveTripAsync = function* ({payload}) {
   const { tripData, tripStats } = payload;
@@ -352,6 +362,10 @@ const watchCreateTrip = function* () {
   }
 };
 
+const watchDeleteTrip = function* () {
+  yield takeLatest(DELETE_TRIP, deleteTrip);
+};
+
 const watchSaveTrip = function* () {
   yield takeLatest(CREATE_TRIP_SAVE, saveTripAsync);
 };
@@ -411,7 +425,8 @@ const rootSaga = function* () {
     watchPostFavorite(),
     watchGetFavorite(),
     watchRemoveFavorite(),
+    watchDeleteTrip(),
   ]);
 };
 
-export { rootSaga, watchGetTrips, watchGetUserLocation, watchGetDirections, watchUserTrips, watchUserSessions, watchPostFavorite, watchGetFavorite, watchRemoveFavorite };
+export { rootSaga, watchGetTrips, watchGetUserLocation, watchGetDirections, watchUserTrips, watchUserSessions, watchPostFavorite, watchGetFavorite, watchRemoveFavorite, watchDeleteTrip };
