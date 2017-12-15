@@ -3,7 +3,7 @@ import PropTypes from 'prop-types';
 import { View, Text, StyleSheet, ScrollView } from 'react-native';
 import { connect } from 'react-redux';
 import Swiper from 'react-native-swiper';
-import { getUserRoutes, getUserSessions } from '../actions/getUserInfo-action';
+import { getUserRoutes, getUserSessions, deleteUserRoute } from '../actions/getUserInfo-action';
 import { getActiveTrip } from '../actions/activeTrip-action';
 // import { STATUS_BAR_HEIGHT } from '../constants';
 import ProfileStats from '../components/profile-stats-component';
@@ -16,6 +16,7 @@ class ProfileScreen extends Component {
     navigation: PropTypes.shape({}).isRequired,    
     getUserSessions: PropTypes.func.isRequired,
     getUserRoutes: PropTypes.func.isRequired,
+    deleteUserRoute: PropTypes.func.isRequired,
     //eslint-disable-next-line
     user: PropTypes.object.isRequired,
     // eslint-disable-next-line
@@ -77,6 +78,9 @@ const mapDispatchToProps = dispatch => ({
   },
   getUserRoutes: (userId) => {
     dispatch(getUserRoutes(userId));
+  },
+  deleteRoute: (userId, routeId) => {
+    dispatch(deleteUserRoute(userId, routeId));
   },
 });
 
